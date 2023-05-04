@@ -76,6 +76,7 @@ require_once(dirname(__FILE__) . '/HttpTransport/Interface.php');
  * ...
  * </code>
  */
+#[\AllowDynamicProperties]
 class Apache_Solr_Service
 {
 	/**
