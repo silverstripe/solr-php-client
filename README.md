@@ -13,3 +13,4 @@ Also, feel free to search and ask questions on the google mailing list: [php-sol
 ## License
 
 Code is released under a 3-Clause BSD license, see [COPYING](https://github.com/PTCInc/solr-php-client/blob/master/COPYING) for full text.
+

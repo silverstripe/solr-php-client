@@ -816,7 +816,7 @@ class Apache_Solr_Service
 		foreach ($document as $key => $value)
 		{
 			$fieldBoost = $document->getFieldBoost($key);
-			$key = htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
+			$key = htmlspecialchars($key??'', ENT_QUOTES, 'UTF-8');
 
 			if (is_array($value))
 			{
@@ -832,7 +832,7 @@ class Apache_Solr_Service
 						$fieldBoost = false;
 					}
 
-					$multivalue = htmlspecialchars($multivalue, ENT_NOQUOTES, 'UTF-8');
+					$multivalue = htmlspecialchars($multivalue??'', ENT_NOQUOTES, 'UTF-8');
 
 					$xml .= '>' . $multivalue . '</field>';
 				}
@@ -846,7 +846,7 @@ class Apache_Solr_Service
 					$xml .= ' boost="' . $fieldBoost . '"';
 				}
 
-				$value = htmlspecialchars($value, ENT_NOQUOTES, 'UTF-8');
+				$value = htmlspecialchars($value??'', ENT_NOQUOTES, 'UTF-8');
 
 				$xml .= '>' . $value . '</field>';
 			}
@@ -925,7 +925,7 @@ class Apache_Solr_Service
 		$committedValue = $fromCommitted ? 'true' : 'false';
 
 		//escape special xml characters
-		$id = htmlspecialchars($id, ENT_NOQUOTES, 'UTF-8');
+		$id = htmlspecialchars($id??'', ENT_NOQUOTES, 'UTF-8');
 
 		$rawPost = '<delete fromPending="' . $pendingValue . '" fromCommitted="' . $committedValue . '"><id>' . $id . '</id></delete>';
 
@@ -953,7 +953,7 @@ class Apache_Solr_Service
 		foreach ($ids as $id)
 		{
 			//escape special xml characters
-			$id = htmlspecialchars($id, ENT_NOQUOTES, 'UTF-8');
+			$id = htmlspecialchars($id??'', ENT_NOQUOTES, 'UTF-8');
 
 			$rawPost .= '<id>' . $id . '</id>';
 		}
@@ -980,7 +980,7 @@ class Apache_Solr_Service
 		$committedValue = $fromCommitted ? 'true' : 'false';
 
 		// escape special xml characters
-		$rawQuery = htmlspecialchars($rawQuery, ENT_NOQUOTES, 'UTF-8');
+		$rawQuery = htmlspecialchars($rawQuery??'', ENT_NOQUOTES, 'UTF-8');
 
 		$rawPost = '<delete fromPending="' . $pendingValue . '" fromCommitted="' . $committedValue . '"><query>' . $rawQuery . '</query></delete>';
 
