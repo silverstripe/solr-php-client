@@ -47,8 +47,7 @@ abstract class Apache_Solr_HttpTransport_AbstractTest extends TestCase
 	const GET_URL = "https://postman-echo.com/get";
 	const GET_RESPONSE_MIME_TYPE = 'application/json';
 	const GET_RESPONSE_ENCODING = 'utf-8';
-	const GET_RESPONSE_MATCH = '{"args":{},"headers":{"x-forwarded-proto":"https","x-forwarded-port":"443","host":"postman-echo.com"';
-	
+
 	const POST_URL = "https://postman-echo.com/post";
 	const POST_DATA = "can=2&q=meh&colspec=ID+Type+Status+Priority+Milestone+Owner+Summary&cells=tiles";
 	const POST_REQUEST_CONTENT_TYPE = 'application/x-www-form-urlencoded; charset=UTF-8';
@@ -58,6 +57,25 @@ abstract class Apache_Solr_HttpTransport_AbstractTest extends TestCase
 	//const POST_RESPONSE_MATCH = 'not sure';
 	
 	abstract public function getFixture();
+
+    private function assertGetResponseBody($body)
+    {
+        $json = json_decode($body, true);
+
+        $this->assertNotNull($json, 'Response body was not valid JSON');
+        $this->assertEquals([], $json['args']);
+        $this->assertEquals(self::GET_URL, $json['url']);
+
+        $expectedHeaders = [
+            'host' => 'postman-echo.com',
+            'x-forwarded-proto' => 'https',
+        ];
+
+        foreach ($expectedHeaders as $name => $value) {
+            $this->assertArrayHasKey($name, $json['headers']);
+            $this->assertEquals($value, $json['headers'][$name]);
+        }
+    }
 	
 	public function testGetDefaultTimeoutWithDefaultConstructor()
 	{
@@ -105,7 +123,7 @@ abstract class Apache_Solr_HttpTransport_AbstractTest extends TestCase
 		$this->assertEquals(200, $response->getStatusCode(), 'Status code was not 200');
 		$this->assertEquals(self::GET_RESPONSE_MIME_TYPE, $response->getMimeType(), 'mimetype was not correct');
 		$this->assertEquals(self::GET_RESPONSE_ENCODING, $response->getEncoding(), 'character encoding was not correct');
-		$this->assertStringStartsWith(self::GET_RESPONSE_MATCH, $response->getBody(), 'body did not start with match text');
+        $this->assertGetResponseBody($response->getBody());
 	}
 	
 	public function testPerformGetRequestWithTimeout()
@@ -118,7 +136,7 @@ abstract class Apache_Solr_HttpTransport_AbstractTest extends TestCase
 		$this->assertEquals(200, $response->getStatusCode(), 'Status code was not 200');
 		$this->assertEquals(self::GET_RESPONSE_MIME_TYPE, $response->getMimeType(), 'mimetype was not correct');
 		$this->assertEquals(self::GET_RESPONSE_ENCODING, $response->getEncoding(), 'character encoding was not correct');
-		$this->assertStringStartsWith(self::GET_RESPONSE_MATCH, $response->getBody(), 'body did not start with match text');
+        $this->assertGetResponseBody($response->getBody());
 	}
 	
 	public function testPerformHeadRequest()
