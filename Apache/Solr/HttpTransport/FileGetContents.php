@@ -121,16 +121,23 @@ class Apache_Solr_HttpTransport_FileGetContents extends Apache_Solr_HttpTranspor
 
 	public function performHeadRequest($url, $timeout = false)
 	{
-		stream_context_set_option($this->_headContext, array(
-				'http' => array(
-					// set HTTP method
-					'method' => 'HEAD',
+		$options = [
+            'http' => [
+                // set HTTP method
+                'method' => 'HEAD',
 
-					// default timeout
-					'timeout' => $this->getDefaultTimeout()
-				)
-			)
-		);
+                // default timeout
+                'timeout' => $this->getDefaultTimeout(),
+            ]
+		];
+
+        if (function_exists('stream_context_set_options')) {
+            // PHP 8.3+
+            stream_context_set_options($this->_headContext, $options);
+        } else {
+            // PHP < 8.3
+            stream_context_set_option($this->_headContext, $options);
+        }
 
 		// set the timeout if specified
 		if ($timeout !== FALSE && $timeout > 0.0)
@@ -153,22 +160,26 @@ class Apache_Solr_HttpTransport_FileGetContents extends Apache_Solr_HttpTranspor
 	
 	public function performPostRequest($url, $rawPost, $contentType, $timeout = false)
 	{
-		stream_context_set_option($this->_postContext, array(
-				'http' => array(
-					// set HTTP method
-					'method' => 'POST',
+        $options = [
+            'http' => [
+                // set HTTP method
+                'method' => 'POST',
 
-					// Add our posted content type (and auth header - see setAuthentication)
-					'header' => "{$this->_authHeader}Content-Type: {$contentType}",
+                // Add our posted content type (and auth header - see setAuthentication)
+                'header' => "{$this->_authHeader}Content-Type: {$contentType}",
 
-					// the posted content
-					'content' => $rawPost,
+                // the posted content
+                'content' => $rawPost,
 
-					// default timeout
-					'timeout' => $this->getDefaultTimeout()
-				)
-			)
-		);
+                // default timeout
+                'timeout' => $this->getDefaultTimeout(),
+            ],
+        ];
+        if (function_exists('stream_context_set_options')) {
+            stream_context_set_options($this->_postContext, $options);
+        } else {
+            stream_context_set_option($this->_postContext, $options);
+        }
 
 		// set the timeout if specified
 		if ($timeout !== FALSE && $timeout > 0.0)
